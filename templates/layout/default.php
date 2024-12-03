@@ -41,23 +41,33 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         <div class="top-nav-links">
             <?php 
             $this->loadHelper('Authentication.Identity');
-            if ($this->Identity->isLoggedIn()) {
-            echo h($this->Identity->get('first_name')) . ' ' . h($this->Identity->get('last_name'));
-            echo ' | ';
-            echo $this->Html->link('Logout', ['controller' => 'Users', 'action' => 'logout']);
-            } else {
-            echo $this->Html->link('Login', ['controller' => 'Users', 'action' => 'login']);
-            }
-            ?>
+            if ($this->Identity->isLoggedIn()) : ?>
+                <span class="user-info">
+                    <?= h($this->Identity->get('first_name')) ?> <?= h($this->Identity->get('last_name')) ?>
+                </span>
+                <?= $this->Html->link('Déconnexion', ['controller' => 'Users', 'action' => 'logout']) ?>
+            <?php else : ?>
+                <?= $this->Html->link('Connexion', ['controller' => 'Users', 'action' => 'login']) ?>
+            <?php endif; ?>
         </div>
     </nav>
-    <main class="main">
-        <div class="container">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
+    
+    <?php if ($this->Identity->isLoggedIn()) : ?>
+    <div class="main-container">
+        <div id="menu" class="side-menu">
+            <?php
+            // Récupération des éléments du menu depuis le controller
+            $menus = $this->cell('Menu')->render();
+            echo $menus;
+            ?>
         </div>
-    </main>
-    <footer>
-    </footer>
+        <main class="main-content">
+            <div class="container">
+                <?= $this->Flash->render() ?>
+                <?= $this->fetch('content') ?>
+            </div>
+        </main>
+    </div>
+    <?php endif; ?>
 </body>
 </html>

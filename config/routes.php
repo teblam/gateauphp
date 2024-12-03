@@ -49,6 +49,8 @@ return function (RouteBuilder $routes): void {
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    $routes->connect('/users/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
+
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',
@@ -93,4 +95,5 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
+    
 };

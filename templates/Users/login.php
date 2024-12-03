@@ -11,5 +11,7 @@
         <?= $this->Form->control('password') ?>
     </fieldset>
     <?= $this->Form->button(__('Login')); ?>
+    <br />
+    <?= $this->Html->link(__('Mot de passe oublié ?'), ['controller' => 'Users', 'action' => 'forgotPassword'])?>
     <?= $this->Form->end() ?>
 </div>

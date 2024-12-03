@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Mailgun\Mailgun;
+
+
 /**
  * Users Controller
  *
@@ -121,7 +124,7 @@ class UsersController extends AppController
         $result = $this->Authentication->getResult();
         // If the user is logged in send them away.
         if ($result->isValid()) {
-            $target = $this->Authentication->getLoginRedirect() ?? '/home';
+            $target = $this->Authentication->getLoginRedirect() ?? '/';
             return $this->redirect($target);
         }
         if ($this->request->is('post')) {
@@ -134,4 +137,60 @@ class UsersController extends AppController
         $this->Authentication->logout();
         return $this->redirect(['controller' => 'Users', 'action' => 'login']);
     }   
+
+    public function forgotPassword()
+    {
+        if ($this->request->is('post')) {
+            $email = trim($this->request->getData('email')); // Récupérer et nettoyer l'email
+
+            // Vérifier si l'email est vide
+            if (empty($email)) {
+                $this->Flash->error('Veuillez entrer une adresse email.');
+                return;
+            }
+
+            // Rechercher l'utilisateur
+            $user = $this->Users->findByEmail($email)->first();
+
+            if (!$user) {
+                $this->Flash->error('Aucun utilisateur trouvé avec cette adresse email.');
+                return;
+            }
+
+            // Générer un nouveau mot de passe
+            $newPassword = bin2hex(random_bytes(4)); // Exemple : 8 caractères
+            $user->password = $newPassword;
+
+            if ($this->Users->save($user)) {
+                // Configurer Mailgun
+                $apiKey = env('MAILGUN_API_KEY');
+                $domain = env('MAILGUN_DOMAIN');
+
+                if (!$apiKey || !$domain) {
+                    $this->Flash->error('Configuration Mailgun manquante.');
+                    return;
+                }
+
+                $mgClient = Mailgun::create($apiKey); // Instanciation du client Mailgun
+
+                // Préparer l'email
+                $params = [
+                    'from' => 'noreply@' . $domain,
+                    'to' => $email,
+                    'subject' => 'Votre nouveau mot de passe',
+                    'text' => "Bonjour,\n\nVotre nouveau mot de passe est : $newPassword\n\nMerci."
+                ];
+
+                try {
+                    $mgClient->messages()->send($domain, $params); // Envoi de l'email
+                    $this->Flash->success('Un nouveau mot de passe a été envoyé à votre adresse email.');
+                } catch (\Exception $e) {
+                    $this->Flash->error('Erreur lors de l\'envoi de l\'email : ' . $e->getMessage());
+                }
+            } else {
+                $this->Flash->error('Impossible de mettre à jour le mot de passe. Veuillez réessayer.');
+            }
+        }
+        $this->render('forgot-password');
+    }
 }
