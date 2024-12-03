@@ -27,6 +27,14 @@
                     <td><?= h($user->email) ?></td>
                 </tr>
                 <tr>
+                    <th><?= __('First Name') ?></th>
+                    <td><?= h($user->first_name) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Last Name') ?></th>
+                    <td><?= h($user->last_name) ?></td>
+                </tr>
+                <tr>
                     <th><?= __('Id') ?></th>
                     <td><?= $this->Number->format($user->id) ?></td>
                 </tr>

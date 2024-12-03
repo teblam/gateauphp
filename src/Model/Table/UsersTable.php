@@ -72,6 +72,16 @@ class UsersTable extends Table
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
+        $validator
+            ->scalar('first_name')
+            ->maxLength('first_name', 255)
+            ->allowEmptyString('first_name');
+
+        $validator
+            ->scalar('last_name')
+            ->maxLength('last_name', 255)
+            ->allowEmptyString('last_name');
+
         return $validator;
     }
 

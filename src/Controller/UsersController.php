@@ -22,13 +22,6 @@ class UsersController extends AppController
         $this->Authentication->allowUnauthenticated(['login']);
     }
 
-    public function beforeFilter(\Cake\Event\EventInterface $event)
-    {
-        parent::beforeFilter($event);
-
-        $this->Authentication->allowUnauthenticated(['login']);
-    }
-
     /**
      * Index method
      *
@@ -140,5 +133,5 @@ class UsersController extends AppController
     {
         $this->Authentication->logout();
         return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-    }
+    }   
 }

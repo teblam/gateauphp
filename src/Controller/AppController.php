@@ -46,7 +46,7 @@ class AppController extends Controller
         // in a controller beforeFilter or initialize
         // Make view and index not require a logged in user.
         $this->Authentication->allowUnauthenticated(['view', 'index']);
-
+        
         $this->loadComponent('Flash');
 
         /*
